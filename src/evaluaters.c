@@ -1,5 +1,17 @@
-#include "../include/repl.h"
+/**********************************************************************
+ *
+ * This file contians the definitions of the lval evaluaters
+ * Given an lval tree with all the data read in the REPL
+ * perform the evaluation recursively to get the results and clean
+ * the memory.
+ *
+ * Author: Joao Pargana
+ *
+ *
+ **********************************************************************/
 
+
+#include "../include/repl.h"
 
 
 lval* lval_add(lval* v, lval* x) {

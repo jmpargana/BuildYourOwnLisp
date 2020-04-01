@@ -1,5 +1,15 @@
-#include "../include/repl.h"
+/**********************************************************************
+ *
+ * Main file which links all definitions in the project as well as the 
+ * mpc parsing library to the main function and creates an undless
+ * loop with the List REPL
+ *
+ * Author: Joao Pargana
+ *
+ *
+ **********************************************************************/
 
+#include "../include/repl.h"
 
 
 int main(int argc, char** argv) {

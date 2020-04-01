@@ -1,5 +1,17 @@
-#include "../include/repl.h"
+/**********************************************************************
+ *
+ * This file contains the definitions of the printer functions
+ * for the lval type
+ * After evaluating the resulting value or error
+ * print it to the user
+ *
+ * Author: Joao Pargana
+ *
+ *
+ **********************************************************************/
 
+
+#include "../include/repl.h"
 
 
 void lval_expr_print(lval* v, char open, char close) {

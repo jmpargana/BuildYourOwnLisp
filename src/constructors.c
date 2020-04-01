@@ -1,3 +1,17 @@
+/**********************************************************************
+ *
+ * Contains all the definitions for the constructors of the 
+ * lval struct (tree)
+ * it contains a pointer to multiple lvals which contain
+ * a number of children, the contents, the type which
+ * can be error, symbol, num or s-expression
+ *
+ * Author: Joao Pargana
+ *
+ *
+ **********************************************************************/
+
+
 #include "../include/repl.h"
 
 

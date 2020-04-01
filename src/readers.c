@@ -1,5 +1,16 @@
-#include "../include/repl.h"
+/**********************************************************************
+ *
+ * This file contains the declarations for the lisp value reader
+ * in the endless loop REPL
+ * It reads and formats the data parsing it into a lval tree
+ *
+ * Author: Joao Pargana
+ *
+ *
+ **********************************************************************/
 
+
+#include "../include/repl.h"
 
 
 lval* lval_read_num(mpc_ast_t* t) {

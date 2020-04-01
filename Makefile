@@ -22,17 +22,6 @@ $(TARGET): $(OBJ)
 $(BUILDDIR)/%.o: $(SRCDIR)/%.c
 	$(CC) $(FLAGS) $(INC) -c $< -o $@
 
-# %: %.o
-# 	${CC} ${FLAGS} $< ${LIB} ${LINK} -o $@
-
-
-# %.o: %.c
-# 	${CC} -c $<
-
-
-# repl: repl.c mpc.c
-# 	${CC} ${FLAGS} $< ${LIB} ${LINK} -o $@
-
 
 clean:
 	rm -rf build/*
