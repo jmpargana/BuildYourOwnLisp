@@ -16,7 +16,7 @@ INC := -I include
 
 
 $(TARGET): $(OBJ)
-	$(CC) $^ -o $(TARGET) $(LIB) $(INC) $(LINK)
+	$(CC) $(FLAGS) $^ -o $(TARGET) $(LIB) $(INC) $(LINK)
 
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.c
