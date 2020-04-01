@@ -60,6 +60,18 @@ lval* lval_sexpr(void) {
 }
 
 
+/* A pointer to a new empty Qexpr lval */
+lval* lval_qexpr(void) {
+    lval* v = malloc(sizeof(lval));
+
+    v->type = LVAL_QEXPR;
+    v->count = 0;
+    v->cell = NULL;
+
+    return v;
+}
+
+
 /* Delete a lval pointer */
 void lval_del(lval* v) {
     
@@ -70,6 +82,7 @@ void lval_del(lval* v) {
         case LVAL_ERR: free(v->err); break;
         case LVAL_SYM: free(v->sym); break;
 
+        case LVAL_QEXPR:
         case LVAL_SEXPR:
             /* Free all elements inside recursively */
             for (int i = 0; i < v->count; i++) {
