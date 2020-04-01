@@ -19,3 +19,8 @@ make
 ```
 
 Enjoy Lisp!
+
+## Key Differences
+
+The macro or quote expression are represented by curly brackets
+instead of the classical **'** apostrophe sign.
