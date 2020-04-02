@@ -110,10 +110,19 @@ lval* lval_add(lval* v, lval* x);
 lval* lval_eval_sexpr(lenv*, lval*);
 lval* lval_eval(lenv*, lval* v);
 lval* lval_take(lval* v, int i);
+void lenv_add_builtin(lenv*, char*, lbuiltin);
+void lenv_add_builtins(lenv*);
 
-/* operators */
-lval* builtin(lval* a, char* func);
+
+/**
+ * Builtins
+ *
+ */
+lval* builtin(lval*, char*);
 lval* builtin_op(lenv*, lval*, char*);
+lval* builtin_def(lenv*, lval*);
+
+/* List Functions */
 lval* builtin_head(lenv*, lval* a);
 lval* builtin_tail(lenv*, lval* a);
 lval* builtin_list(lenv*, lval* a);
@@ -121,6 +130,7 @@ lval* builtin_eval(lenv*, lval* a);
 lval* builtin_join(lenv*, lval* a);
 lval* lval_join(lval* x, lval* y);
 
+/* Operators */
 lval* builtin_add(lenv*, lval*);
 lval* builtin_sub(lenv*, lval*);
 lval* builtin_mul(lenv*, lval*);
@@ -128,8 +138,6 @@ lval* builtin_div(lenv*, lval*);
 lval* builtin_mod(lenv*, lval*);
 lval* builtin_pow(lenv*, lval*);
 
-void lenv_add_builtin(lenv*, char*, lbuiltin);
-void lenv_add_builtins(lenv*);
 
 
 
