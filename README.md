@@ -74,7 +74,33 @@ lispy> add-mul 10 20
 lispy> def {add-mul-ten} (add-mul 10)
 ()
 lispy> add-mul-ten 50
+510
 ```
 
+- You can even provide a much nicer syntax to the lambda
+```lisp
+lispy> def {fun} (\ {args body} {def (head args) (\ (tail args) body)})
+()
+lispy> fun {add-together x y} {+ x y}
+()
+lispy> add-together 10 30
+40
+```
+
+- Haskell Curry is also available (variable argument number)
+```lisp
+lispy> fun {unpack f xs} {eval (join (list f) xs)}
+()
+lispy> fun {pack f & xs} {f xs}
+()
+lispy> def {uncurry} pack
+()
+lispy> def {curry} unpack
+()
+lispy> curry + {5 6 7}
+18
+lispy> uncurry head 5 6 7
+{5}
+```
 
 
