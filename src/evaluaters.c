@@ -24,9 +24,16 @@ lval* lval_add(lval* v, lval* x) {
 }
 
 
-lval* lval_eval(lval* v) {
-    if (v->type == LVAL_SEXPR) { return lval_eval_sexpr(v); }
-    /* All other lval types remain the same */
+lval* lval_eval(lenv* e, lval* v) {
+
+    if (v->type == LVAL_SYM) {
+
+        lval* x = lenv_get(e, v);
+        lval_del(v);
+        return x;
+    }
+
+    if (v->type == LVAL_SEXPR) { return lval_eval_sexpr(e, v); }
     return v;
 }
 
@@ -54,7 +61,7 @@ lval* lval_take(lval* v, int i) {
 }
 
 
-lval* builtin_op(lval* a, char* op) {
+lval* builtin_op(lenv* e, lval* a, char* op) {
 
     /* Ensure all arguments are numbers */
     for (int i = 0; i < a->count; i++) {
@@ -104,7 +111,7 @@ lval* builtin_op(lval* a, char* op) {
 }
 
 
-lval* builtin_head(lval* a) {
+lval* builtin_head(lenv* e, lval* a) {
     LASSERT(a, a->count == 1,
             "Function 'tail' passed too many arguments!");
 
@@ -123,7 +130,7 @@ lval* builtin_head(lval* a) {
 }
 
 
-lval* builtin_tail(lval* a) {
+lval* builtin_tail(lenv* e, lval* a) {
     LASSERT(a, a->count == 1,
             "Function 'tail' passed too many arguments!");
     
@@ -143,13 +150,13 @@ lval* builtin_tail(lval* a) {
 }
 
 
-lval* builtin_list(lval* a) {
+lval* builtin_list(lenv* e, lval* a) {
     a->type = LVAL_QEXPR;
     return a;
 }
 
 
-lval* builtin_eval(lval* a) {
+lval* builtin_eval(lenv* e, lval* a) {
     LASSERT(a, a->count == 1,
             "Function 'eval' passed too many arguments!");
 
@@ -160,11 +167,11 @@ lval* builtin_eval(lval* a) {
     lval* x = lval_take(a, 0);
     x->type = LVAL_SEXPR;
     
-    return lval_eval(x);
+    return lval_eval(e, x);
 }
 
 
-lval* builtin_join(lval* a) {
+lval* builtin_join(lenv* e, lval* a) {
 
     for (int i = 0; i < a->count; i++) {
         LASSERT(a, a->cell[i]->type == LVAL_QEXPR,
@@ -195,25 +202,54 @@ lval* lval_join(lval* x, lval* y) {
 }
 
 
-lval* builtin(lval* a, char* func) {
-    if (strcmp("list", func) == 0) { return builtin_list(a); }
-    if (strcmp("head", func) == 0) { return builtin_head(a); }
-    if (strcmp("tail", func) == 0) { return builtin_tail(a); }
-    if (strcmp("join", func) == 0) { return builtin_join(a); }
-    if (strcmp("eval", func) == 0) { return builtin_eval(a); }
-    if (strstr("+-/*^%", func)) { return builtin_op(a, func); }
+/* lval* builtin(lval* a, char* func) { */
+/*     if (strcmp("list", func) == 0) { return builtin_list(a); } */
+/*     if (strcmp("head", func) == 0) { return builtin_head(a); } */
+/*     if (strcmp("tail", func) == 0) { return builtin_tail(a); } */
+/*     if (strcmp("join", func) == 0) { return builtin_join(a); } */
+/*     if (strcmp("eval", func) == 0) { return builtin_eval(a); } */
+/*     if (strstr("+-/*^%", func)) { return builtin_op(a, func); } */
 
-    lval_del(a);
-    return lval_err("Unknown Function!");
+/*     lval_del(a); */
+/*     return lval_err("Unknown Function!"); */
+/* } */
+
+
+lval* builtin_add(lenv* e, lval* a) {
+    return builtin_op(e, a, "+");
 }
 
 
+lval* builtin_sub(lenv* e, lval* a) {
+    return builtin_op(e, a, "-");
+}
 
-lval* lval_eval_sexpr(lval* v) {
+
+lval* builtin_mul(lenv* e, lval* a) {
+    return builtin_op(e, a, "*");
+}
+
+
+lval* builtin_div(lenv* e, lval* a) {
+    return builtin_op(e, a, "/");
+}
+
+
+lval* builtin_mod(lenv* e, lval* a) {
+    return builtin_op(e, a, "%");
+}
+
+
+lval* builtin_pow(lenv* e, lval* a) {
+    return builtin_op(e, a, "^");
+}
+
+
+lval* lval_eval_sexpr(lenv* e, lval* v) {
 
     /* Evaluate Children */
     for (int i = 0; i < v->count; i++) {
-        v->cell[i] = lval_eval(v->cell[i]);
+        v->cell[i] = lval_eval(e, v->cell[i]);
     }
 
     /* Error Checking */
@@ -229,14 +265,40 @@ lval* lval_eval_sexpr(lval* v) {
 
     /* Ensure first element is Symbol */
     lval* f = lval_pop(v, 0);
-    if (f->type != LVAL_SYM) {
+    if (f->type != LVAL_FUN) {
         lval_del(f); lval_del(v);
-        return lval_err("S-expression does not start with symbol!");
+        return lval_err("First element is not a function!");
     }
 
     /* Call builtin with operator */
-    lval* result = builtin(v, f->sym);
+    lval* result = f->fun(e, v);
     lval_del(f);
     return result;
 }
 
+
+void lenv_add_builtin(lenv* e, char* name, lbuiltin func) {
+    lval* k = lval_sym(name);
+    lval* v = lval_fun(func);
+
+    lenv_put(e, k, v);
+    lval_del(k); lval_del(v);
+}
+
+
+void lenv_add_builtins(lenv* e) {
+    /* List Functions */
+    lenv_add_builtin(e, "list", builtin_list);
+    lenv_add_builtin(e, "head", builtin_head);
+    lenv_add_builtin(e, "tail", builtin_tail);
+    lenv_add_builtin(e, "eval", builtin_eval);
+    lenv_add_builtin(e, "join", builtin_join);
+
+    /* Mathematical Functions */
+    lenv_add_builtin(e, "+", builtin_add);
+    lenv_add_builtin(e, "-", builtin_sub);
+    lenv_add_builtin(e, "*", builtin_mul);
+    lenv_add_builtin(e, "/", builtin_div);
+    lenv_add_builtin(e, "%", builtin_mod);
+    lenv_add_builtin(e, "^", builtin_pow);
+}

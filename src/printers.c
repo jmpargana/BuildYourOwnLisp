@@ -39,6 +39,7 @@ void lval_print(lval* v) {
         case LVAL_SYM: printf("%s", v->sym); break;
         case LVAL_SEXPR: lval_expr_print(v, '(', ')'); break;
         case LVAL_QEXPR: lval_expr_print(v, '{', '}'); break;
+        case LVAL_FUN: printf("<function>"); break;
     }
 }
 
