@@ -14,8 +14,12 @@
  * Define Error Macros
  *
  */
-#define LASSERT(args, cond, err) \
-    if (!(cond)) { lval_del(args); return lval_err(err); }
+#define LASSERT(args, cond, fmt, ...)               \
+    if (!(cond)) {                                  \
+        lval* err = lval_err(fmt, ##__VA_ARGS__);   \
+        lval_del(args);                             \
+        return err;                                 \
+    }
 
 
 
@@ -76,7 +80,7 @@ struct lenv {
  *
  */
 lval* lval_num(long);
-lval* lval_err(char*);
+lval* lval_err(char*, ...);
 lval* lval_sym(char*);
 lval* lval_sexpr(void);
 lval* lval_qexpr(void);
