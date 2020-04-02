@@ -87,7 +87,7 @@ lispy> add-together 10 30
 40
 ```
 
-- Haskell Curry is also available (variable argument number)
+- Haskell Curry is also available 
 ```lisp
 lispy> fun {unpack f xs} {eval (join (list f) xs)}
 ()
