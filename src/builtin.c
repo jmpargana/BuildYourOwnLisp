@@ -11,8 +11,17 @@
 
 
 lval* builtin_def(lenv* e, lval* a) {
+    return builtin_var(e, a, "def");
+}
 
-    LASSERT_TYPE("def", a, 0, LVAL_QEXPR);
+
+lval* builtin_put(lenv* e, lval* a) {
+    return builtin_var(e, a, "=");
+}
+
+
+lval* builtin_var(lenv* e, lval* a, char* func) {
+    LASSERT_TYPE(func, a, 0, LVAL_QEXPR);
 
     /* First argument is symbol list */
     lval* syms = a->cell[0];
@@ -33,7 +42,13 @@ lval* builtin_def(lenv* e, lval* a) {
 
     /* Assign copies of values to symbols */
     for (int i = 0; i < syms->count; i++) {
-        lenv_put(e, syms->cell[i], a->cell[i+1]);
+        if (strcmp(func, "def") == 0) {
+            lenv_def(e, syms->cell[i], a->cell[i+1]);
+        }
+
+        if (strcmp(func, "=") == 0) {
+            lenv_put(e, syms->cell[i], a->cell[i+1]);
+        }
     }
 
     lval_del(a);
@@ -69,3 +84,5 @@ lval* builtin_mod(lenv* e, lval* a) {
 lval* builtin_pow(lenv* e, lval* a) {
     return builtin_op(e, a, "^");
 }
+
+

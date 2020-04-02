@@ -61,7 +61,6 @@ lval* lval_take(lval* v, int i) {
 }
 
 
-
 lval* builtin_op(lenv* e, lval* a, char* op) {
 
     /* Ensure all arguments are numbers */
@@ -221,9 +220,83 @@ lval* lval_eval_sexpr(lenv* e, lval* v) {
     }
 
     /* Call builtin with operator */
-    lval* result = f->fun(e, v);
+    lval* result = lval_call(e, f, v);
     lval_del(f);
     return result;
 }
 
 
+
+lval* builtin_lambda(lenv* e, lval* a) {
+    /* Check two arguments, each of which are Q-Expressions */
+    LASSERT_NUM("\\", a, 2);
+    LASSERT_TYPE("\\", a, 0, LVAL_QEXPR);
+    LASSERT_TYPE("\\", a, 1, LVAL_QEXPR);
+
+    /* Check first Q-Expression contains only Symbols */
+    for (int i = 0; i < a->cell[0]->count; i++) {
+        LASSERT(a, (a->cell[0]->cell[i]->type == LVAL_SYM),
+                "Cannot define non-symbol. "
+                "Got %s, Expected %s.",
+                ltype_name(a->cell[0]->cell[i]->type), ltype_name(LVAL_SYM));
+    }
+
+    /* Pop first two arguments and pass them to lval_lambda */
+    lval* formals = lval_pop(a, 0);
+    lval* body = lval_pop(a, 0);
+    lval_del(a);
+
+    return lval_lambda(formals, body);
+}
+
+
+lval* lval_call(lenv* e, lval* f, lval* a) {
+
+    /* If Builtin then simply call that */
+    if (f->builtin) { return f->builtin(e, a); }
+
+    /* Record Argument Counts */
+    int given = a->count;
+    int total = f->formals->count;
+
+    /* While arguments still remain to be processed */
+    while (a->count) {
+
+        /* If we've ran out of formal arguments to bind */
+        if (f->formals->count == 0) {
+            lval_del(a); return lval_err(
+                "Function passed too many arguments. "
+                "Got %i, Expected &i.", given, total);
+        }
+
+        /* Pop the first symbol from the formals */
+        lval* sym = lval_pop(f->formals, 0);
+
+        /* Pop the next argument from the list */
+        lval* val = lval_pop(a, 0);
+
+        /* Bind a copy into the function's environment */
+        lenv_put(f->env, sym, val);
+
+        /* Delete symbol and value */
+        lval_del(sym); lval_del(val);
+    }
+
+    /* Argument list is now bound so can be cleaned up */
+    lval_del(a);
+
+    /* If all formals have been bound evaluate */
+    if (f->formals->count == 0) {
+
+        /* Set environment parent to evaluation environment */
+        f->env->par = e;
+
+        /* Evaluate and return */
+        return builtin_eval(
+            f->env, lval_add(lval_sexpr(), lval_copy(f->body)));
+
+    } else {
+        /* Otherwise return partially evaluated function */
+        return lval_copy(f);
+    }
+}

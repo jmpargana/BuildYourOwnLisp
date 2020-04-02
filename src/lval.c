@@ -89,7 +89,7 @@ lval* lval_fun(lbuiltin func) {
     lval* v = malloc(sizeof(lval));
 
     v->type = LVAL_FUN;
-    v->fun = func;
+    v->builtin = func;
 
     return v;
 }
@@ -104,7 +104,18 @@ lval* lval_copy(lval* v) {
 
         /* Copy Functions and Numbers Directly */
         case LVAL_NUM: x->num = v->num; break;
-        case LVAL_FUN: x->fun = v->fun; break;
+        case LVAL_FUN: 
+
+            if (v->builtin) {
+                x->builtin = v->builtin;                
+
+            } else {
+                x->builtin = NULL;
+                x->env = lenv_copy(v->env);
+                x->formals = lval_copy(v->formals);
+                x->body = lval_copy(v->body);
+            }
+            break;
 
         /* Copy strings using malloc and strcpy */
         case LVAL_ERR:
@@ -136,7 +147,14 @@ void lval_del(lval* v) {
     
     switch (v->type) {
         case LVAL_NUM: break;           // Do nothing for number
-        case LVAL_FUN: break;           // or function pointers (variables)
+        case LVAL_FUN: 
+
+            if (!v->builtin) {
+                lenv_del(v->env);
+                lval_del(v->formals);
+                lval_del(v->body);
+            }
+            break;
 
         /* Free the strings */
         case LVAL_ERR: free(v->err); break;
@@ -152,10 +170,29 @@ void lval_del(lval* v) {
             /* And itself */
             free(v->cell);
             break;
+
     }
 
     /* Finally free the memory allocated for the "lval" struct itself */
     free(v);
+}
+
+
+lval* lval_lambda(lval* formals, lval* body) {
+    lval* v = malloc(sizeof(lval));
+    v->type = LVAL_FUN;
+
+    /* Set Builtin to NULL */
+    v->builtin = NULL;
+
+    /* Build new environment */
+    v->env = lenv_new();
+
+    /* Set Formals and Body */
+    v->formals = formals;
+    v->body = body;
+
+    return v;
 }
 
 

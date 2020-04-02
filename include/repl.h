@@ -45,7 +45,7 @@
 
 /************************************************************************************
  *
- * Define Struct
+ * Define Lisp Value and Lisp Environment Structs
  *
  * 
  ************************************************************************************/
@@ -69,15 +69,19 @@ typedef lval*(*lbuiltin)(lenv*, lval*);
 /* lval struct has a type enum, error enum or value */
 typedef struct lval {
     int type;
-    long num;
 
-    /* Error and Symbol types have some string data */
+    /* Basic */
+    long num;
     char* err;
     char* sym;
 
-    lbuiltin fun;
+    /* Function */
+    lbuiltin builtin;
+    lenv* env;
+    lval* formals;
+    lval* body;
 
-    /* Count and Pointer to a list of "lval* " */
+    /* Expression */
     int count;
     struct lval** cell;
 
@@ -85,6 +89,7 @@ typedef struct lval {
 
 
 struct lenv {
+    lenv* par;
     int count;
     char** syms;
     lval** vals;
@@ -96,7 +101,7 @@ struct lenv {
 
 
 /**
- * Definitions in constructors.c 
+ * Definitions of contructors
  *
  */
 lval* lval_num(long);
@@ -104,7 +109,10 @@ lval* lval_err(char*, ...);
 lval* lval_sym(char*);
 lval* lval_sexpr(void);
 lval* lval_qexpr(void);
+
 lval* lval_fun(lbuiltin);
+lval* lval_lambda(lval*, lval*);
+lval* lval_call(lenv*, lval*, lval*);
 
 lval* lval_copy(lval*);
 void lval_del(lval*);
@@ -114,6 +122,8 @@ lenv* lenv_new(void);
 void lenv_del(lenv*);
 lval* lenv_get(lenv*, lval*);
 void lenv_put(lenv*, lval*, lval*);
+lenv* lenv_copy(lenv*);
+void lenv_def(lenv*, lval*, lval*);
 
 
 
@@ -145,6 +155,9 @@ void lenv_add_builtins(lenv*);
 lval* builtin(lval*, char*);
 lval* builtin_op(lenv*, lval*, char*);
 lval* builtin_def(lenv*, lval*);
+lval* builtin_put(lenv*, lval*);
+lval* builtin_var(lenv*, lval*, char*);
+lval* builtin_lambda(lenv*, lval*);
 
 /* List Functions */
 lval* builtin_head(lenv*, lval* a);

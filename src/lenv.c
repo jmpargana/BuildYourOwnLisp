@@ -16,6 +16,7 @@
 lenv* lenv_new(void) {
     lenv* e = malloc(sizeof(lenv));
 
+    e->par = NULL;
     e->count = 0;
     e->syms = NULL;
     e->vals = NULL;
@@ -47,8 +48,12 @@ lval* lenv_get(lenv* e, lval* k) {
             return lval_copy(e->vals[i]);
         }
     }
-    /* If no symbol found return error */
-    return lval_err("Unbound symbol!");
+    /* If no symbol check in parent otherwise error */
+    if (e->par) {
+        return lenv_get(e->par, k);
+    } else {
+        return lval_err("Unbound symbol!");
+    }
 }
 
 
@@ -75,4 +80,32 @@ void lenv_put(lenv* e, lval* k, lval* v) {
     e->vals[e->count-1] = lval_copy(v);
     e->syms[e->count-1] = malloc(strlen(k->sym)+1);
     strcpy(e->syms[e->count-1], k->sym);
+}
+
+
+lenv* lenv_copy(lenv* e) {
+    lenv* n = malloc(sizeof(lenv));
+
+    n->par = e->par;
+    n->count = e->count;
+
+    n->syms = malloc(sizeof(char*) * n->count);
+    n->vals = malloc(sizeof(lval*) * n->count);
+
+    for (int i = 0; i < e->count; i++) {
+        n->syms[i] = malloc(strlen(e->syms[i]) + 1);
+        strcpy(n->syms[i], e->syms[i]);
+        n->vals[i] = lval_copy(e->vals[i]);
+    }
+
+    return n;
+}
+
+
+/* Define global variable */
+void lenv_def(lenv* e, lval* k, lval* v) {
+    /* Iterate until e has no parent */
+    while (e->par) { e = e->par; }
+    /* Put value in e */
+    lenv_put(e, k, v);
 }
