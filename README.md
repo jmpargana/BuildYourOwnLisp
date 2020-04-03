@@ -235,7 +235,7 @@ And the really powerful ones.
 ```lisp
 ; Perhaps the most needed functin in a recursive language
 (map - {2 3 -7})                    ; {-2 -3 7}
-(map (\ {x} {+ x 10}) {5 2})        ; {15 17}
+(map (\ {x} {+ x 10}) {5 2})        ; {15 12}
 
 ; In the repl
 lispy> map print {"hello" "world"}
