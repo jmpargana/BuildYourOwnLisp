@@ -25,5 +25,5 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.c
 
 clean:
 	rm -rf build/*
-	rm repl
+	rm lispy
 

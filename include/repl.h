@@ -2,11 +2,38 @@
 #define REPL_H
 
 
+/**
+ * So its portable in windows
+ */
+#ifdef _WIN32
+
+
+static char buffer[2048];
+
+char* readline(char* prompt) {
+    fputs(prompt, stdout);
+    fgets(buffer, 2048, stdin);
+    char* cpy = malloc(strlen(buffer) + 1);
+    strcpy(cpy, buffer);
+    cpy[strlen(cpy)-1] = '\0';
+    return cpy;
+}
+
+void add_history(char* unused) {}
+
+#else 
+#include <editline/readline.h>
+#endif
+
+
+/**
+ * This headers should be the same for both
+ * I have no idea if they'll work on windows
+ */
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <editline/readline.h>
 #include "./mpc.h"
 
 
