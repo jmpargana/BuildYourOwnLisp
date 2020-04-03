@@ -117,3 +117,23 @@ lispy> if {>= x y} {+ x y} {- x y}
 -1
 ```
 
+
+- You can the typical recursive functions
+```lisp
+lispy> def {len} (\ {l} {if (== l {} {+ 1 (len (tail l))})})
+()
+lispy> len {1 1 1 1}
+4
+lispy> len {1 {2 {3 2 {4}}}}
+2
+lispy> def {reverse} (\ {l} {if (== l {}) {{}} {join (reverse (tail l)) (head l)}})
+()
+lispy> reverse {1 2 3 4}
+{4 3 2 1}
+lispy> def {!} (\ {n} {if (<= n 0) {1} {* n (! (- n 1))}})
+()
+lispy> ! 5
+120
+lispy> ! (* 4 5)
+2432902008176640000
+```
