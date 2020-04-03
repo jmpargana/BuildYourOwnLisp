@@ -175,6 +175,19 @@ lval* builtin_div(lenv*, lval*);
 lval* builtin_mod(lenv*, lval*);
 lval* builtin_pow(lenv*, lval*);
 
+/* Comparisons */
+lval* builtin_ord(lenv*, lval*, char*);
+int  lval_eq(lval*, lval*);
+lval* builtin_cmp(lenv*, lval*, char*);
+lval* builtin_if(lenv*, lval*);
+
+lval* builtin_eq(lenv*, lval*);
+lval* builtin_ne(lenv*, lval*);
+lval* builtin_gt(lenv*, lval*);
+lval* builtin_lt(lenv*, lval*);
+lval* builtin_ge(lenv*, lval*);
+lval* builtin_le(lenv*, lval*);
+
 
 
 

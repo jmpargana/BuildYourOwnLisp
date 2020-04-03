@@ -103,4 +103,17 @@ lispy> uncurry head 5 6 7
 {5}
 ```
 
+- Comparison functions and conditionals
+```lisp
+lispy> > 10 5
+1
+lispy> == 5 {}
+0
+lispy> == {1 {2 3}} {1 {2 3}}
+1
+lispy> def {x y} 1 2
+()
+lispy> if {>= x y} {+ x y} {- x y}
+-1
+```
 
