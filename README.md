@@ -120,7 +120,7 @@ lispy> if {>= x y} {+ x y} {- x y}
 
 - You can the typical recursive functions
 ```lisp
-lispy> def {len} (\ {l} {if (== l {} {+ 1 (len (tail l))})})
+lispy> def {len} (\ {l} {if (== l {}) {0} {+ 1 (len (tail l))}})
 ()
 lispy> len {1 1 1 1}
 4
