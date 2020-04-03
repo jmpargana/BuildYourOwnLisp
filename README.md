@@ -8,7 +8,14 @@ book by Daniel Holden and includes some extra features.
 This project made me familiarize myself with C and Lisp as well as compiler 
 logic.
 
-## Usage
+## Table of Contents
+1. [Usage](#usage)
+2. [Key Differences](#keydifferences)
+3. [Pure Lispy](#purelispy)
+4. [Standard Library](#standardlibrary)
+
+## Usage <a name="usage"></a>
+
 
 Clone this repository, compile the source code and execute the resulting binary:
 
@@ -25,20 +32,29 @@ You can either open the REPL:
 Or run one or more programs:
 
 ```bash
-./lispy program1.lispy program2.lispy
+./lispy program1.lspy program2.lspy
 ```
 
 Enjoy Lisp!
 
 
 
-## Key Differences
+## Key Differences <a name="keydifferences"></a>
+
 
 The macro or quote expression are represented by curly brackets
 instead of the classical **'** apostrophe or quote symbol sign.
 
 The syntax might seem odd if you're too familiar with Lisp, so I'll
-provide you some examples.
+provide you some examples both using the standard library as writing pure lispy.
+
+
+## Pure Lispy <a name="purelispy"></a>
+
+
+Some features represented here are much easier to use (the syntax is nicer) 
+if you load the standard library, so make sure you read the next part as well.
+
 
 - Classical mathematical operations
 ```lisp
@@ -159,4 +175,102 @@ Error: This is an error
 lispy> load "examples/hello.lspy" ; expression in files need to be surrounded by parentheses
 "Hello World!"
 ()
+```
+
+
+## Standard Library <a name="standardlibrary"></a>
+
+Start by loading the standard library file either in the REPL or directly on
+your source file, like so:
+
+```lisp
+(load "prelude.lspy")
+```
+
+Make sure to copy this file to wherever you are executing the binary from.
+
+The empty list, boolean values and logical functions are defined by name.
+And the nicer function definition mentioned above as well as the Haskell Curry
+are already implemented.
+
+```lisp
+(== nil {})         ; evaluates to true
+(and true false)    ; evaluates to false
+
+(fun {square x} {* x x})    ; instead of lambda
+
+(unpack + {5 4 3})         ; works without the conversion
+```
+
+
+You can define a new scope and compose functions.
+
+
+```lisp
+let {do (= {x} 1) (x)}
+(x)                 ; Is out of scope so shows error "Unbound Symbol 'x'"
+
+(def {mul-neg} (comp - (unpack *)))
+(mul-neg {2 8})     ; Evaluates to -16
+```
+
+You can use the classical list functions provided by Haskell.
+
+
+```lisp
+(len {4 2 {2 3}})       ; 3
+(nth 4 {1 2 3 4 5})     ; 4
+(last {1 2 4})          ; 4
+(take 2 {1 2 1 3})      ; {1 2}
+(elem 2 {1 1 1})        ; false
+(drop 2 {1 2 3 4})      ; {3 4}
+(split 2 {1 2 3 4})     ; {3 4 1 2}
+```
+
+
+And the really powerful ones.
+
+
+```lisp
+; Perhaps the most needed functin in a recursive language
+map - {2 3 -7}                  ; {-2 -3 7}
+map (\ {x} {+ x 10}) {5 2}      ; {15 17}
+
+; In the repl
+lispy> map print {"hello" "world"}
+"hello"
+"world"
+{() ()}
+
+
+; filter is available as well
+filter (\ {x} {> x 5}) {6 2 1 3 4 2 3}      ; {6}
+
+
+; as is fold left which is used to define sum and product
+(fun {sum l} {foldl + 0 l})                 ; ()
+(fun {product l} {foldl * 1 l})             ; ()
+
+(sum {1 2 3 2 1})                           ; 9
+```
+
+
+Some nice syntax is also available for conditionals, such as:
+
+
+```lisp
+(fun {day-name x} {
+    case x
+        {0 "Monday"}
+        {1 "Tuesday"}
+        ;; You get the point
+})
+
+
+(fun {fib n} {
+    select 
+        { (== n 0) 0 }
+        { (== n 1) 1 }
+        { otherwise (+ (fib (- n 1)) (fib (- n 2))) }
+})
 ```
