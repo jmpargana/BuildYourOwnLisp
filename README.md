@@ -187,7 +187,8 @@ your source file, like so:
 (load "prelude.lspy")
 ```
 
-Make sure to copy this file to wherever you are executing the binary from.
+Make sure to copy the prelude file to wherever you are executing the binary from
+and that the code is always surround by parentheses unlike the in the REPL.
 
 The empty list, boolean values and logical functions are defined by name.
 And the nicer function definition mentioned above as well as the Haskell Curry
@@ -207,7 +208,7 @@ You can define a new scope and compose functions.
 
 
 ```lisp
-let {do (= {x} 1) (x)}
+(let {do (= {x} 1) (x)})
 (x)                 ; Is out of scope so shows error "Unbound Symbol 'x'"
 
 (def {mul-neg} (comp - (unpack *)))
@@ -233,8 +234,8 @@ And the really powerful ones.
 
 ```lisp
 ; Perhaps the most needed functin in a recursive language
-map - {2 3 -7}                  ; {-2 -3 7}
-map (\ {x} {+ x 10}) {5 2}      ; {15 17}
+(map - {2 3 -7})                    ; {-2 -3 7}
+(map (\ {x} {+ x 10}) {5 2})        ; {15 17}
 
 ; In the repl
 lispy> map print {"hello" "world"}
@@ -244,7 +245,7 @@ lispy> map print {"hello" "world"}
 
 
 ; filter is available as well
-filter (\ {x} {> x 5}) {6 2 1 3 4 2 3}      ; {6}
+(filter (\ {x} {> x 5}) {6 2 1 3 4 2 3})      ; {6}
 
 
 ; as is fold left which is used to define sum and product
