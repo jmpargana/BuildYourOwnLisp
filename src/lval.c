@@ -126,6 +126,10 @@ lval* lval_copy(lval* v) {
             x->sym = malloc(strlen(v->sym) + 1);
             strcpy(x->sym, v->sym); break;
 
+        case LVAL_STR:
+            x->str = malloc(strlen(v->str) + 1);
+            strcpy(x->str, v->str); break;
+
         /* Copy lists by copying each sub-expression */
         case LVAL_SEXPR:
         case LVAL_QEXPR:
@@ -159,6 +163,7 @@ void lval_del(lval* v) {
         /* Free the strings */
         case LVAL_ERR: free(v->err); break;
         case LVAL_SYM: free(v->sym); break;
+        case LVAL_STR: free(v->str); break;
 
         case LVAL_QEXPR:
         case LVAL_SEXPR:
@@ -196,3 +201,12 @@ lval* lval_lambda(lval* formals, lval* body) {
 }
 
 
+lval* lval_str(char* s) {
+    lval* v = malloc(sizeof(lval));
+
+    v->type = LVAL_STR;
+    v->str = malloc(strlen(s) + 1);
+    strcpy(v->str, s);
+
+    return v;
+}

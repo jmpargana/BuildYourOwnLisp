@@ -13,11 +13,19 @@ logic.
 Clone this repository, compile the source code and execute the resulting binary:
 
 ```bash
-git clone https://github.com/jmpargana/BuildYourOwnLisp && cd BuildYourOwnLisp
+git clone https://github.com/jmpargana/BuildYourOwnLisp && cd BuildYourOwnLisp && make
+```
 
-make
+You can either open the REPL:
 
-./repl
+```bash
+./lispy
+```
+
+Or run one or more programs:
+
+```bash
+./lispy program1.lispy program2.lispy
 ```
 
 Enjoy Lisp!
@@ -34,7 +42,7 @@ provide you some examples.
 
 - Classical mathematical operations
 ```lisp
-lispy> + 1 (* (^ 3 4) (% 23 13))
+lispy> + 1 (* (^ 3 4) (% 23 13))            ; comments are written after a semicolon
 811
 ```
 
@@ -136,4 +144,19 @@ lispy> ! 5
 120
 lispy> ! (* 4 5)
 2432902008176640000
+```
+
+* Strings and loading files
+
+```lisp
+lispy> head {"hello" "world"}
+"hello"
+lispy> print "Hello World!"
+"Hello World!"
+()
+lispy> error "This is an error"
+Error: This is an error
+lispy> load "examples/hello.lspy" ; expression in files need to be surrounded by parentheses
+"Hello World!"
+()
 ```

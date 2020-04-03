@@ -59,7 +59,7 @@ typedef struct lenv lenv;
 
 
 /* Can be Error, Number, Symbol or S-Expression */
-enum { LVAL_ERR, LVAL_NUM, LVAL_SYM, 
+enum { LVAL_ERR, LVAL_NUM, LVAL_SYM, LVAL_STR,
        LVAL_FUN, LVAL_SEXPR, LVAL_QEXPR };
 
 
@@ -74,6 +74,7 @@ typedef struct lval {
     long num;
     char* err;
     char* sym;
+    char* str;
 
     /* Function */
     lbuiltin builtin;
@@ -101,7 +102,24 @@ struct lenv {
 
 
 /**
- * Definitions of contructors
+ * Declaration of global variables
+ */
+mpc_parser_t* Number;
+mpc_parser_t* Symbol;
+mpc_parser_t* String;
+mpc_parser_t* Comment;
+mpc_parser_t* Sexpr;
+mpc_parser_t* Qexpr;
+mpc_parser_t* Expr;
+mpc_parser_t* Lispy;
+
+
+
+/************************************************************************************/
+
+
+/**
+ * Definitions of constructors
  *
  */
 lval* lval_num(long);
@@ -109,6 +127,7 @@ lval* lval_err(char*, ...);
 lval* lval_sym(char*);
 lval* lval_sexpr(void);
 lval* lval_qexpr(void);
+lval* lval_str(char*);
 
 lval* lval_fun(lbuiltin);
 lval* lval_lambda(lval*, lval*);
@@ -133,6 +152,7 @@ void lenv_def(lenv*, lval*, lval*);
  */
 lval* lval_read_num(mpc_ast_t* t);
 lval* lval_read(mpc_ast_t* t);
+lval* lval_read_str(mpc_ast_t*);
 
 
 
@@ -158,6 +178,11 @@ lval* builtin_def(lenv*, lval*);
 lval* builtin_put(lenv*, lval*);
 lval* builtin_var(lenv*, lval*, char*);
 lval* builtin_lambda(lenv*, lval*);
+
+/* String manipulation */
+lval* builtin_load(lenv*, lval*);
+lval* builtin_error(lenv*, lval*);
+lval* builtin_print(lenv*, lval*);
 
 /* List Functions */
 lval* builtin_head(lenv*, lval* a);
@@ -198,6 +223,7 @@ lval* builtin_le(lenv*, lval*);
 void lval_print(lval* v);
 void lval_expr_print(lval* v, char open, char close);
 void lval_println(lval* v);
+void lval_print_str(lval*);
 char* ltype_name(int);
 
 

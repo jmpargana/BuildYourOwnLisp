@@ -6,7 +6,7 @@ LIB = lib/mpc.c
 
 SRCDIR := src
 BUILDDIR := build
-TARGET := repl
+TARGET := lispy
 
 
 SRC := $(shell find $(SRCDIR) -type f -name *.c)
