@@ -17,9 +17,13 @@ logic.
 ## Usage <a name="usage"></a>
 
 
+Make sure you have **readline** installed on your system.
 Clone this repository, compile the source code and execute the resulting binary:
 
 ```bash
+# If you don't have readline installed, it can be done in ubuntu with the command
+sudo apt-get install libreadline
+
 git clone https://github.com/jmpargana/BuildYourOwnLisp && cd BuildYourOwnLisp && make
 ```
 

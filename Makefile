@@ -1,7 +1,7 @@
 CC := gcc --std=c99
 FLAGS := -Wall
 
-LINK = -ledit -lm
+LINK = -lreadline -lm
 LIB = lib/mpc.c
 
 SRCDIR := src
